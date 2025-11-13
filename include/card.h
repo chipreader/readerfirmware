@@ -57,7 +57,7 @@ void printUnsignedCharArrayAsHex(const unsigned char *arr, size_t size);
 // Card operations
 bool ReadCard(byte u8_UID[8], kCard *pk_Card);
 bool WaitForCard(kUser *pk_User, kCard *pk_Card);
-bool customize_card(const char *user_buff, const unsigned char *encript_key, unsigned char *ID);
+bool customize_card(const char *user_buff, const unsigned char *encript_key, unsigned char *ID, kCard *pk_Card);
 bool authenticate_user(unsigned char *ID, char *user_buffer, kCard *pk_Card, unsigned char *key_ret);
 bool IsDesfireTimeout();
 

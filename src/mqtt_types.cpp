@@ -67,7 +67,8 @@ const char* deviceModeToString(DeviceMode mode) {
         case DeviceMode::REGISTER: return "register";
         case DeviceMode::AUTH: return "auth";
         case DeviceMode::READ: return "read";
-        default: return "idle";
+        case DeviceMode::UNKNOWN: return "unknown";
+        default: return "unknown";
     }
 }
 
@@ -76,7 +77,8 @@ DeviceMode stringToDeviceMode(const char* str) {
     if (strcmp(str, "register") == 0) return DeviceMode::REGISTER;
     if (strcmp(str, "auth") == 0) return DeviceMode::AUTH;
     if (strcmp(str, "read") == 0) return DeviceMode::READ;
-    return DeviceMode::IDLE;
+    if (strcmp(str, "unknown") == 0) return DeviceMode::UNKNOWN;
+    return DeviceMode::UNKNOWN;
 }
 
 // Device Status conversions

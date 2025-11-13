@@ -53,7 +53,8 @@ enum class DeviceMode {
     IDLE,
     REGISTER,
     AUTH,
-    READ
+    READ,
+    UNKNOWN
 };
 
 // Device Status

@@ -152,20 +152,13 @@ bool deserializeAuthVerify(JsonObject payload, AuthVerifyPayload& data) {
 bool deserializeReadStart(JsonObject payload, ReadStartPayload& data) {
     data.clear();
     
-    if (!payload.containsKey("timeout_seconds") || !payload.containsKey("read_blocks")) {
+    if (!payload.containsKey("timeout_seconds")) {
         return false;
     }
     
     data.timeout_seconds = payload["timeout_seconds"] | 0;
     
-    JsonArray blocks = payload["read_blocks"].as<JsonArray>();
-    data.read_blocks_count = 0;
-    for (JsonVariant v : blocks) {
-        if (data.read_blocks_count >= 256) break;
-        data.read_blocks[data.read_blocks_count++] = v.as<uint8_t>();
-    }
-    
-    if (data.timeout_seconds < 1 || data.timeout_seconds > 300 || data.read_blocks_count == 0) {
+    if (data.timeout_seconds < 1 || data.timeout_seconds > 300) {
         return false;
     }
     
@@ -243,11 +236,6 @@ bool serializeHeartbeat(JsonObject payload, const HeartbeatPayload& data) {
 bool serializeReadSuccess(JsonObject payload, const ReadSuccessPayload& data) {
     payload["tag_uid"] = data.tag_uid;
     payload["message"] = data.message;
-    
-    JsonArray blocks = payload.createNestedArray("blocks_read");
-    for (size_t i = 0; i < data.blocks_read_count; i++) {
-        blocks.add(data.blocks_read[i]);
-    }
     
     return true;
 }

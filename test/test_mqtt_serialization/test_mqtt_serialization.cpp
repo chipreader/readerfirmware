@@ -207,13 +207,12 @@ void test_error_payload() {
 }
 
 // =============================================================================
-// TEST: Read Start Command with Multiple Blocks
+// TEST: Read Start Command
 // =============================================================================
 
 void test_read_start_with_blocks() {
     const char* json = R"({
-        "timeout_seconds": 45,
-        "read_blocks": [4, 5, 6, 7, 8]
+        "timeout_seconds": 45
     })";
     
     StaticJsonDocument<MQTT_COMMAND_DOC_SIZE> doc;
@@ -225,14 +224,8 @@ void test_read_start_with_blocks() {
     TEST_ASSERT_TRUE_MESSAGE(result, "Failed to deserialize read_start");
     
     TEST_ASSERT_EQUAL(45, data.timeout_seconds);
-    TEST_ASSERT_EQUAL(5, data.read_blocks_count);
-    TEST_ASSERT_EQUAL(4, data.read_blocks[0]);
-    TEST_ASSERT_EQUAL(5, data.read_blocks[1]);
-    TEST_ASSERT_EQUAL(6, data.read_blocks[2]);
-    TEST_ASSERT_EQUAL(7, data.read_blocks[3]);
-    TEST_ASSERT_EQUAL(8, data.read_blocks[4]);
     
-    printf("Read Start with blocks deserialized successfully\n");
+    printf("Read Start deserialized successfully\n");
 }
 
 // =============================================================================

@@ -67,13 +67,9 @@ struct AuthVerifyPayload {
 // Read Start Command
 struct ReadStartPayload {
     int timeout_seconds;                        // Operation timeout in seconds
-    uint8_t read_blocks[256];                   // Block numbers to read from tag
-    size_t read_blocks_count;                   // Number of blocks to read
     
     void clear() {
         timeout_seconds = 0;
-        memset(read_blocks, 0, sizeof(read_blocks));
-        read_blocks_count = 0;
     }
 };
 
@@ -187,13 +183,9 @@ struct HeartbeatPayload {
 struct ReadSuccessPayload {
     char tag_uid[MAX_TAG_UID_LENGTH + 1];      // Tag UID
     char message[MAX_ERROR_MESSAGE_LENGTH + 1]; // Success message
-    uint8_t blocks_read[256];                   // Blocks that were read
-    size_t blocks_read_count;                   // Number of blocks read
     
     void clear() {
         memset(tag_uid, 0, sizeof(tag_uid));
         memset(message, 0, sizeof(message));
-        memset(blocks_read, 0, sizeof(blocks_read));
-        blocks_read_count = 0;
     }
 };

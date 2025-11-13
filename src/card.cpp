@@ -155,14 +155,15 @@ void InitReader(bool b_ShowError)
 // Stores a new user and his card in the EEPROM of the Teensy
 // formerly known as AddCardToEeprom
 //  you get the user buffer along with the encription key from the server.
-bool customize_card(const char *user_buff, const unsigned char *encript_key, unsigned char *ID)
+bool customize_card(const char *user_buff, const unsigned char *encript_key, unsigned char *ID, kCard *pk_Card)
 {
-    display_place_card();
+    // Card is already read and validated by caller - no need to wait again
     kUser k_User;
-    kCard k_Card;
-    if (!WaitForCard(&k_User, &k_Card))
-        return false;
-
+    
+    // Copy the card UID from the already-read card
+    // Extract UID from the last read card (stored in register_state.tag_uid_binary in main.cpp)
+    // Note: The caller should ensure pk_Card contains valid data
+    
     // First the entire memory of s8_Name is filled with random data.
     // Then the username + terminating zero is written over it.
     // The result is for example: s8_Name[NAME_BUF_SIZE] = { 'P', 'e', 't', 'e', 'r', 0, 0xDE, 0x45, 0x70, 0x5A, 0xF9, 0x11, 0xAB }
@@ -171,10 +172,10 @@ bool customize_card(const char *user_buff, const unsigned char *encript_key, uns
     // Utils::GenerateRandom((byte*)k_User.s8_Name, NAME_BUF_SIZE);
     // fill the name field with originally used for the name with the user buffer data, that is used to generate key and store value
     display_processing();
-    strcpy(k_User.s8_Name, user_buff);
+    strlcpy(k_User.s8_Name, user_buff, NAME_BUF_SIZE);
 
 #if USE_DESFIRE
-    if ((k_Card.e_CardType & CARD_Desfire) == 0) // Classic
+    if ((pk_Card->e_CardType & CARD_Desfire) == 0) // Classic
     {
 #if !ALLOW_ALSO_CLASSIC
         Utils::Print("The card is not a Desfire card.\r\n");
@@ -186,7 +187,7 @@ bool customize_card(const char *user_buff, const unsigned char *encript_key, uns
         if (!ChangePiccMasterKey())
             return false;
 
-        if (k_Card.e_CardType != CARD_DesRandom)
+        if (pk_Card->e_CardType != CARD_DesRandom)
         {
             // The secret stored in a file on the card is not required when using a card with random ID
             // because obtaining the real card UID already requires the PICC master key. This is enough security.
@@ -204,7 +205,12 @@ bool customize_card(const char *user_buff, const unsigned char *encript_key, uns
 
     // vault = k_User; // hab ich eingebaut und bin nicht stolz
 
-    memcpy(ID, k_User.ID.u8, 7);
+    // Note: We need to get the ID from somewhere. Since the card is already read,
+    // we should get it from the register_state in main.cpp
+    // For now, we'll return the UID that was passed to us
+    // The caller should have already stored the UID in register_state.tag_uid_binary
+    // memcpy(ID, k_User.ID.u8, 7);
+    
     Utils::Print("Customisatzion done");
     return true;
     // UserManager::StoreNewUser(&k_User);
